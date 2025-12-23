@@ -3,7 +3,7 @@ import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import * as Icon from "react-native-feather";
 
 interface QuickActionItem {
-    id: number;
+    id: string;
     title: string;
     icon: keyof typeof Icon;
     color: string;
@@ -12,35 +12,35 @@ interface QuickActionItem {
 
 const quickActions: QuickActionItem[] = [
     {
-        id: 1,
+        id: 'offers',
         title: 'Offers',
         icon: 'Gift',
         color: '#f97316',
         bgColor: '#fff7ed',
     },
     {
-        id: 2,
+        id: 'top-rated',
         title: 'Top Rated',
         icon: 'Star',
         color: '#eab308',
         bgColor: '#fefce8',
     },
     {
-        id: 3,
+        id: 'fast',
         title: 'Fast',
         icon: 'Zap',
         color: '#22c55e',
         bgColor: '#f0fdf4',
     },
     {
-        id: 4,
+        id: 'budget',
         title: 'Budget',
         icon: 'DollarSign',
         color: '#3b82f6',
         bgColor: '#eff6ff',
     },
     {
-        id: 5,
+        id: 'near',
         title: 'Near You',
         icon: 'MapPin',
         color: '#ec4899',
@@ -49,17 +49,19 @@ const quickActions: QuickActionItem[] = [
 ];
 
 interface QuickActionsProps {
-    onActionPress?: (actionId: number) => void;
+    activeFilter: string | null;
+    onActionPress: (actionId: string) => void;
 }
 
-export default function QuickActions({ onActionPress }: QuickActionsProps) {
+export default function QuickActions({ activeFilter, onActionPress }: QuickActionsProps) {
     const renderAction = (item: QuickActionItem) => {
         const IconComponent = Icon[item.icon] as any;
+        const isActive = activeFilter === item.id;
 
         return (
             <TouchableOpacity
                 key={item.id}
-                onPress={() => onActionPress?.(item.id)}
+                onPress={() => onActionPress(item.id)}
                 activeOpacity={0.7}
                 style={{
                     alignItems: 'center',
@@ -68,31 +70,32 @@ export default function QuickActions({ onActionPress }: QuickActionsProps) {
             >
                 <View
                     style={{
-                        backgroundColor: item.bgColor,
+                        backgroundColor: isActive ? item.color : item.bgColor,
                         borderRadius: 18,
                         padding: 14,
                         marginBottom: 8,
                         shadowColor: item.color,
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: 0.15,
-                        shadowRadius: 8,
-                        elevation: 3,
-                        borderWidth: 1,
-                        borderColor: `${item.color}20`,
+                        shadowOffset: { width: 0, height: isActive ? 6 : 4 },
+                        shadowOpacity: isActive ? 0.3 : 0.15,
+                        shadowRadius: isActive ? 10 : 8,
+                        elevation: isActive ? 6 : 3,
+                        borderWidth: 2,
+                        borderColor: isActive ? item.color : 'transparent',
+                        transform: [{ scale: isActive ? 1.05 : 1 }],
                     }}
                 >
                     <IconComponent
                         width={24}
                         height={24}
-                        color={item.color}
+                        color={isActive ? '#fff' : item.color}
                         strokeWidth={2.5}
                     />
                 </View>
                 <Text
                     style={{
                         fontSize: 12,
-                        fontWeight: '600',
-                        color: '#374151',
+                        fontWeight: isActive ? '700' : '600',
+                        color: isActive ? item.color : '#374151',
                     }}
                 >
                     {item.title}

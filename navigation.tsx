@@ -8,22 +8,25 @@ import { CartScreen } from './screens/CartScreen';
 import DeliveryScreen from './screens/DeliveryScreen';
 import FavoritesScreen from './screens/FavoritesScreen';
 import { HomeScreen } from './screens/HomeScreen';
+import NotificationsScreen from './screens/NotificationsScreen';
 import OrderPreparingScreen from './screens/OrderPreparingScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import { RestaurantScreen } from './screens/RestaurantScreen';
 import SearchScreen from './screens/SearchScreen';
-import { themeColors } from './theme';
+
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function HomeTabs() {
+    const { theme } = useTheme();
     return (
         <Tab.Navigator
             screenOptions={{
                 headerShown: false,
                 tabBarStyle: {
-                    backgroundColor: '#ffffff',
+                    backgroundColor: theme.colors.surface,
                     borderTopWidth: 0,
                     height: 85,
                     paddingTop: 10,
@@ -33,9 +36,10 @@ function HomeTabs() {
                     shadowOpacity: 0.1,
                     shadowRadius: 12,
                     elevation: 20,
+                    borderTopColor: theme.colors.border,
                 },
-                tabBarActiveTintColor: themeColors.bgColor(1),
-                tabBarInactiveTintColor: '#9ca3af',
+                tabBarActiveTintColor: theme.colors.primary,
+                tabBarInactiveTintColor: theme.colors.textSecondary,
                 tabBarLabelStyle: {
                     fontSize: 11,
                     fontWeight: '600',
@@ -67,7 +71,7 @@ function HomeTabs() {
                                     width: 5,
                                     height: 5,
                                     borderRadius: 2.5,
-                                    backgroundColor: themeColors.bgColor(1),
+                                    backgroundColor: theme.colors.primary,
                                 }} />
                             )}
                         </View>
@@ -94,7 +98,7 @@ function HomeTabs() {
                                     width: 5,
                                     height: 5,
                                     borderRadius: 2.5,
-                                    backgroundColor: themeColors.bgColor(1),
+                                    backgroundColor: theme.colors.primary,
                                 }} />
                             )}
                         </View>
@@ -122,7 +126,7 @@ function HomeTabs() {
                                     width: 5,
                                     height: 5,
                                     borderRadius: 2.5,
-                                    backgroundColor: themeColors.bgColor(1),
+                                    backgroundColor: theme.colors.primary,
                                 }} />
                             )}
                         </View>
@@ -150,7 +154,7 @@ function HomeTabs() {
                                     width: 5,
                                     height: 5,
                                     borderRadius: 2.5,
-                                    backgroundColor: themeColors.bgColor(1),
+                                    backgroundColor: theme.colors.primary,
                                 }} />
                             )}
                         </View>
@@ -163,14 +167,17 @@ function HomeTabs() {
 
 export default function Navigation() {
     return (
-        <CartProvider>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="Home" component={HomeTabs} />
-                <Stack.Screen name="Restaurant" component={RestaurantScreen} />
-                <Stack.Screen name="Cart" component={CartScreen} />
-                <Stack.Screen name="OrderPreparing" component={OrderPreparingScreen} options={{ presentation: 'fullScreenModal' }} />
-                <Stack.Screen name="Delivery" component={DeliveryScreen} options={{ animation: 'fade' }} />
-            </Stack.Navigator>
-        </CartProvider>
+        <ThemeProvider>
+            <CartProvider>
+                <Stack.Navigator screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="Home" component={HomeTabs} />
+                    <Stack.Screen name="Restaurant" component={RestaurantScreen} />
+                    <Stack.Screen name="Cart" component={CartScreen} />
+                    <Stack.Screen name="OrderPreparing" component={OrderPreparingScreen} options={{ presentation: 'fullScreenModal' }} />
+                    <Stack.Screen name="Delivery" component={DeliveryScreen} options={{ animation: 'fade' }} />
+                    <Stack.Screen name="Notifications" component={NotificationsScreen} options={{ presentation: 'modal' }} />
+                </Stack.Navigator>
+            </CartProvider>
+        </ThemeProvider>
     );
 }
