@@ -15,49 +15,45 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const CartScreen = () => {
     const navigation = useNavigation<any>();
-    const { items, addToCart, removeFromCart, clearCart, cartTotal, cartCount } = useCart();
+    const { items, removeFromCart, cartTotal } = useCart();
 
     const deliveryFee = 2;
     const orderTotal = cartTotal + deliveryFee;
 
     return (
         <SafeAreaView className="flex-1 bg-white">
-            <StatusBar barStyle="dark-content" />
+            <StatusBar  />
 
             {/* Header */}
-            <View className="flex-row items-center justify-between px-5 py-4 border-b border-gray-100">
+            <View className="relative py-4 border-b border-gray-100">
                 <TouchableOpacity
                     onPress={() => navigation.goBack()}
-                    className="bg-gray-100 rounded-full p-2"
+                    style={{ backgroundColor: themeColors.bgColor(1) }}
+                    className="absolute z-10 rounded-full p-2 top-3 left-4"
                 >
-                    <Icon.ArrowLeft
-                        width={20}
-                        height={20}
-                        strokeWidth={2.5}
-                        stroke={themeColors.bgColor(1)}
-                    />
+                    <Icon.ArrowLeft strokeWidth={3} height={20} width={20} stroke="white" />
                 </TouchableOpacity>
-
-                <Text className="text-xl font-bold text-gray-900">Your Cart</Text>
-
-                <TouchableOpacity onPress={clearCart}>
-                    <Text style={{ color: themeColors.bgColor(1) }} className="font-medium">
-                        Clear
-                    </Text>
-                </TouchableOpacity>
+                <View className="items-center">
+                    <Text className="font-bold text-xl text-gray-900">Your cart</Text>
+                    <Text className="text-gray-500 text-sm mt-0.5">Papa Johns</Text>
+                </View>
             </View>
 
             {/* Delivery Info */}
             <View
-                className="flex-row items-center mx-5 mt-4 p-3 rounded-xl"
                 style={{ backgroundColor: themeColors.bgColor(0.1) }}
+                className="flex-row px-4 py-3 items-center mx-4 my-4 rounded-2xl"
             >
-                <Icon.Clock width={18} height={18} color={themeColors.bgColor(1)} />
-                <Text className="text-gray-700 ml-2 flex-1">
-                    Deliver in 25-35 minutes
+                 <View>
+                     <Icon.Truck strokeWidth={2.5} height={20} width={20} className='text-base'  style={{ color: themeColors.bgColor(1) }} />
+                 </View>
+
+             
+                <Text className="flex-1 pl-3 text-gray-700 font-medium">
+                    Delivered in 20-30 minutes
                 </Text>
                 <TouchableOpacity>
-                    <Text style={{ color: themeColors.bgColor(1) }} className="font-semibold">
+                    <Text style={{ color: themeColors.bgColor(1) }} className="font-semibold text-base">
                         Change
                     </Text>
                 </TouchableOpacity>
@@ -65,121 +61,88 @@ export const CartScreen = () => {
 
             {/* Cart Items */}
             <ScrollView
-                className="flex-1 mt-4"
-                contentContainerStyle={{ paddingBottom: 20 }}
                 showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 20 }}
+                className="flex-1 bg-white"
             >
-                {items.length === 0 ? (
-                    <View className="items-center justify-center py-20">
-                        <Icon.ShoppingCart width={64} height={64} color="#d1d5db" />
-                        <Text className="text-gray-400 text-lg mt-4">
-                            Your cart is empty
-                        </Text>
-                        <TouchableOpacity
-                            onPress={() => navigation.goBack()}
-                            className="mt-6 px-6 py-3 rounded-full"
-                            style={{ backgroundColor: themeColors.bgColor(1) }}
-                        >
-                            <Text className="text-white font-semibold">
-                                Browse Menu
+                {items.map((item, index) => (
+                    <View key={item.id}>
+                        <View className="flex-row items-center py-4 px-4 mx-4">
+                            {/* Quantity */}
+                            <Text
+                                style={{ color: themeColors.bgColor(1) }}
+                                className="font-bold text-base mr-3"
+                            >
+                                {item.quantity} x
                             </Text>
-                        </TouchableOpacity>
-                    </View>
-                ) : (
-                    items.map((item, index) => (
-                        <View
-                            key={item.id}
-                            className="flex-row items-center bg-white mx-5 py-3 border-b border-gray-100"
-                        >
+
                             {/* Item Image */}
                             <Image
+                                className="h-14 w-14 rounded-full"
                                 source={item.image}
-                                className="h-16 w-16 rounded-xl"
                                 resizeMode="cover"
                             />
 
-                            {/* Item Info */}
-                            <View className="flex-1 ml-3">
-                                <Text className="text-base font-semibold text-gray-800">
-                                    {item.name}
-                                </Text>
-                                <Text
-                                    className="text-base font-bold mt-0.5"
-                                    style={{ color: themeColors.bgColor(1) }}
-                                >
-                                    ${item.price}
-                                </Text>
-                            </View>
+                            {/* Item Name */}
+                            <Text className="flex-1 font-semibold text-gray-800 text-base ml-3">
+                                {item.name}
+                            </Text>
 
-                            {/* Quantity Controls */}
-                            <View className="flex-row items-center">
-                                <TouchableOpacity
-                                    onPress={() => removeFromCart(item.id)}
-                                    className="p-1.5 rounded-full"
-                                    style={{ backgroundColor: themeColors.bgColor(1) }}
-                                >
-                                    <Icon.Minus
-                                        width={14}
-                                        height={14}
-                                        color="white"
-                                        strokeWidth={3}
-                                    />
-                                </TouchableOpacity>
-                                <Text className="px-3 font-bold text-gray-800">
-                                    {item.quantity}
-                                </Text>
-                                <TouchableOpacity
-                                    onPress={() => addToCart(item)}
-                                    className="p-1.5 rounded-full"
-                                    style={{ backgroundColor: themeColors.bgColor(1) }}
-                                >
-                                    <Icon.Plus
-                                        width={14}
-                                        height={14}
-                                        color="white"
-                                        strokeWidth={3}
-                                    />
-                                </TouchableOpacity>
-                            </View>
+                            {/* Price */}
+                            <Text className="font-bold text-gray-900 text-base mr-4">
+                                ${item.price}
+                            </Text>
+
+                            {/* Remove Button */}
+                            <TouchableOpacity
+                                className="p-2 rounded-full"
+                                style={{ backgroundColor: themeColors.bgColor(1) }}
+                                onPress={() => removeFromCart(item.id)}
+                            >
+                                <Icon.Minus strokeWidth={2.5} height={16} width={16} stroke="white" />
+                            </TouchableOpacity>
                         </View>
-                    ))
-                )}
+
+                        {/* Divider between items */}
+                        {index < items.length - 1 && (
+                            <View className="h-px bg-gray-100 mx-8" />
+                        )}
+                    </View>
+                ))}
             </ScrollView>
 
+            {/* Divider */}
+            <View className="h-px bg-gray-200 mx-4" />
+
             {/* Order Summary */}
-            {cartCount > 0 && (
-                <View className="px-5 py-4 bg-gray-50 border-t border-gray-100">
-                    {/* Subtotal */}
-                    <View className="flex-row justify-between mb-2">
-                        <Text className="text-gray-500">Subtotal</Text>
-                        <Text className="text-gray-800 font-medium">${cartTotal.toFixed(2)}</Text>
-                    </View>
-
-                    {/* Delivery Fee */}
-                    <View className="flex-row justify-between mb-2">
-                        <Text className="text-gray-500">Delivery Fee</Text>
-                        <Text className="text-gray-800 font-medium">${deliveryFee.toFixed(2)}</Text>
-                    </View>
-
-                    {/* Total */}
-                    <View className="flex-row justify-between pt-2 border-t border-gray-200">
-                        <Text className="text-gray-900 font-bold text-lg">Total</Text>
-                        <Text className="text-gray-900 font-bold text-lg">
-                            ${orderTotal.toFixed(2)}
-                        </Text>
-                    </View>
-
-                    {/* Place Order Button */}
-                    <TouchableOpacity
-                        className="mt-4 py-4 rounded-full items-center"
-                        style={{ backgroundColor: themeColors.bgColor(1) }}
-                    >
-                        <Text className="text-white font-bold text-lg">
-                            Place Order
-                        </Text>
-                    </TouchableOpacity>
+            <View className="bg-white px-6 pt-4 pb-2">
+                <View className="flex-row justify-between py-2">
+                    <Text className="text-gray-500 text-base">Subtotal</Text>
+                    <Text className="text-gray-700 font-medium text-base">${cartTotal}</Text>
                 </View>
-            )}
+                <View className="flex-row justify-between py-2">
+                    <Text className="text-gray-500 text-base">Delivery Fee</Text>
+                    <Text className="text-gray-700 font-medium text-base">${deliveryFee}</Text>
+                </View>
+                <View className="flex-row justify-between py-2">
+                    <Text className="text-gray-900 font-bold text-base">Order Total</Text>
+                    <Text className="text-gray-900 font-bold text-base">${orderTotal}</Text>
+                </View>
+            </View>
+
+            {/* Place Order Button */}
+            <View className="px-6 pb-4 pt-2">
+                <TouchableOpacity
+                    style={{ backgroundColor: themeColors.bgColor(1) }}
+                    className="py-4 rounded-full shadow-lg"
+                    activeOpacity={0.8}
+                    onPress={() => navigation.navigate('OrderPreparing')}
+                >
+                    <Text className="text-white text-center font-bold text-lg">
+                        Place Order
+                    </Text>
+                </TouchableOpacity>
+            </View>
         </SafeAreaView>
     );
 };

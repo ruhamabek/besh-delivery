@@ -1,11 +1,48 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import * as Icon from "react-native-feather";
 
+const FAVORITES_KEY = '@favorites';
+
 export default function RestaurantCard({ item }: { item: any }) {
     const navigation = useNavigation<any>();
-    const [isFavorite, setIsFavorite] = useState(false)
+    const [isFavorite, setIsFavorite] = useState(false);
+
+    useEffect(() => {
+        checkIfFavorite();
+    }, []);
+
+    const checkIfFavorite = async () => {
+        try {
+            const stored = await AsyncStorage.getItem(FAVORITES_KEY);
+            if (stored) {
+                const favoriteIds = JSON.parse(stored);
+                setIsFavorite(favoriteIds.includes(item.id));
+            }
+        } catch (error) {
+            console.log('Error checking favorite:', error);
+        }
+    };
+
+    const toggleFavorite = async () => {
+        try {
+            const stored = await AsyncStorage.getItem(FAVORITES_KEY);
+            let favoriteIds = stored ? JSON.parse(stored) : [];
+
+            if (isFavorite) {
+                favoriteIds = favoriteIds.filter((id: number) => id !== item.id);
+            } else {
+                favoriteIds.push(item.id);
+            }
+
+            await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(favoriteIds));
+            setIsFavorite(!isFavorite);
+        } catch (error) {
+            console.log('Error toggling favorite:', error);
+        }
+    };
 
     return (
         <TouchableWithoutFeedback onPress={() => navigation.navigate('Restaurant', { ...item })}>
@@ -41,7 +78,7 @@ export default function RestaurantCard({ item }: { item: any }) {
 
                     {/* Favorite Button */}
                     <TouchableOpacity
-                        onPress={() => setIsFavorite(!isFavorite)}
+                        onPress={toggleFavorite}
                         style={{
                             position: 'absolute',
                             top: 10,
@@ -86,7 +123,7 @@ export default function RestaurantCard({ item }: { item: any }) {
                     >
                         <Icon.Clock width={12} height={12} color="#f97316" strokeWidth={2.5} />
                         <Text style={{ fontSize: 11, fontWeight: '600', color: '#374151', marginLeft: 4 }}>
-                            25-35 min
+                            {item.deliveryTime || '25-35 min'}
                         </Text>
                     </View>
 
@@ -187,7 +224,7 @@ export default function RestaurantCard({ item }: { item: any }) {
                         </View>
                         <Text className="text-gray-400 text-xs mx-2">•</Text>
                         <Text className="text-gray-500 text-xs">
-                            Min. $15
+                            Min. ${item.minOrder || 15}
                         </Text>
                     </View>
                 </View>
