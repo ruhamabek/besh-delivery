@@ -9,30 +9,33 @@ export default function CartIcon() {
     const navigation = useNavigation<any>();
     const { cartCount } = useCart();
 
-    if (cartCount === 0) return null;
+    // Always show cart icon to allow user to view empty cart or just navigation
+    // if (cartCount === 0) return null;
 
     return (
         <TouchableOpacity
             onPress={() => navigation.navigate('Cart')}
-            className="absolute top-14 right-4 p-3 rounded-full"
+            className="absolute top-4 right-4 z-50 p-4 rounded-full"
             style={{
                 backgroundColor: themeColors.bgColor(1),
                 shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 5,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 5,
+                elevation: 10,
             }}
         >
-            <Icon.ShoppingCart width={20} height={20} color="white" strokeWidth={2.5} />
-            {/* Badge */}
-            <View
-                className="absolute -top-1 -right-1 bg-red-500 rounded-full h-5 w-5 items-center justify-center"
-            >
-                <Text className="text-white text-xs font-bold">
-                    {cartCount > 9 ? '9+' : cartCount}
-                </Text>
-            </View>
+            <Icon.ShoppingCart width={24} height={24} color="white" strokeWidth={2.5} />
+            {/* Badge - Only show if count > 0 */}
+            {cartCount > 0 && (
+                <View
+                    className="absolute -top-1 -right-1 bg-red-500 rounded-full h-6 w-6 items-center justify-center border-2 border-white"
+                >
+                    <Text className="text-white text-xs font-bold">
+                        {cartCount > 9 ? '9+' : cartCount}
+                    </Text>
+                </View>
+            )}
         </TouchableOpacity>
     );
 }
